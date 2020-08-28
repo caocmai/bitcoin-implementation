@@ -86,6 +86,8 @@ class Blockchain(object):
 
 blockchain = Blockchain()
 
+# mine or verify new transaction, this must be called to validiate transaction to add to blockchain
+# otherwise will not add to the chain because not yet verified
 @app.route('/mine', methods=['GET'])
 def mine():
     last_block = blockchain.last_block
@@ -119,14 +121,16 @@ def new_transaction():
     print("value\n\n\n\n\n\n\n", values)
     required = ['sender', 'recipient', 'amount']
 
+    # validing that all three fields are present
     if not all(k in values for k in required):
         return 'Missing values', 400
 
+    # adding to blockchain and return the index of that chain
     index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
     response = {'message': f'Transaction is scheduled to be added to Block No. {index}'}
     return jsonify(response), 201
 
-
+# getting the blockchain
 @app.route('/chain', methods=['GET'])
 def full_chain():
     response = {
